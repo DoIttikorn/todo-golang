@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"os"
@@ -55,4 +56,24 @@ func (t *Todos) Load(filename string) error {
 		return error
 	}
 
+	if len(file) == 0 {
+		return error
+	}
+
+	error = json.Unmarshal(file, t)
+	if error != nil {
+		return error
+	}
+
+	return nil
+}
+
+func (t *Todos) Store(filename string) error {
+	data, err := json.Marshal(t)
+
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filename, data, 0644)
 }
